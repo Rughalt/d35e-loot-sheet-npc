@@ -72,4 +72,4 @@ To install a module, follow these instructions:
 
 ### Feedback
 
-If you have any suggestions or feedback, please contact me on Discord (Dorgendubal#3348).
+If you have any suggestions or feedback, please contact me on Discord (Rughalt#4238).
