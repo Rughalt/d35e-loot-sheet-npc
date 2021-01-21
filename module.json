@@ -1,12 +1,12 @@
 {
-  "name": "lootsheetnpcpf1",
-  "title": "Loot Sheet NPC Pathfinder1",
+  "name": "d35elootsheetnpc",
+  "title": "3.5e Loot Sheet NPC",
   "description": "This module adds an additional NPC sheet which can be used for loot containers such as chests or shopkeepers.",
   "version": "1.7.2",
-  "author": "Sven Werlen (originally from Jan Ole Peek (ChalkOne) and Charles Miller (Kage))",
-  "systems": ["pf1"],
-  "esmodules": ["/lootsheetnpcpf1.js"],
-  "styles": ["/css/lootsheetnpcpf1.css"],
+  "author": "Antoni 'Rughalt' Sobkowicz, based on Sven Werlen (originally from Jan Ole Peek (ChalkOne) and Charles Miller (Kage))",
+  "systems": ["D35E"],
+  "esmodules": ["/d35elootsheet.js"],
+  "styles": ["/css/d35elootsheet.css"],
   "languages": [
     {
       "lang": "en",
@@ -20,9 +20,9 @@
     }
   ],
   "socket": true,
-  "url": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1",
-  "download": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/archive/v-1.7.2.zip",
-  "manifest": "https://raw.githubusercontent.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/master/module.json",
+  "url": "https://github.com/Rughalt/d35e-loot-sheet-npc",
+  "download": "replace",
+  "manifest": "replace",
   "minimumCoreVersion": "0.7.4",
   "compatibleCoreVersion": "1.0.0"
 }

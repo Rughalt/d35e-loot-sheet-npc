@@ -8,16 +8,16 @@ export class LootSheetActions {
    * Displays a message into the chat log
    */
   static chatMessage(speaker, owner, message, item) {
-    if (game.settings.get("lootsheetnpcpf1", "buyChat")) {
+    if (game.settings.get("d35elootsheetnpc", "buyChat")) {
       if (item) {
-        message = `<div class="pf1 chat-card item-card" data-actor-id="${owner._id}" data-item-id="${item._id}">
+        message = `<div class="D35E chat-card item-card" data-actor-id="${owner._id}" data-item-id="${item._id}">
                     <header class="card-header flexrow">
                         <img src="${item.img}" title="${item.showName}" width="36" height="36">
                         <h3 class="item-name">${item.showName}</h3>
                     </header>
                     <div class="card-content"><p>${message}</p></div></div>`;
       } else {
-        message = `<div class="pf1 chat-card item-card" data-actor-id="${owner._id}">
+        message = `<div class="D35E chat-card item-card" data-actor-id="${owner._id}">
                     <div class="card-content"><p>${message}</p></div></div>`;
       }
       ChatMessage.create({
@@ -35,7 +35,7 @@ export class LootSheetActions {
    * Sends a error message to the target user
    */
   static errorMessageToActor(target, message) {
-    game.socket.emit("module.lootsheetnpcpf1", {
+    game.socket.emit("module.d35elootsheetnpc", {
       type: "error",
       targetId: target.id,
       message: message
@@ -173,7 +173,7 @@ export class LootSheetActions {
     let messageKey = ""
     let cost = Math.floor(moved.item.showCost)
     
-    if(container.getFlag("lootsheetnpcpf1", "lootsheettype") === "Merchant") {
+    if(container.getFlag("d35elootsheetnpc", "lootsheettype") === "Merchant") {
       messageKey = "ls.chatSell"
       let sellerFunds = duplicate(giver.data.data.currency)
       if(sellerFunds && moved.item.showCost > 0) {
@@ -208,7 +208,7 @@ export class LootSheetActions {
       quantity = sellItem.data.quantity;
     }
 
-    let sellerModifier = seller.getFlag("lootsheetnpcpf1", "priceModifier");
+    let sellerModifier = seller.getFlag("d35elootsheetnpc", "priceModifier");
     if (!sellerModifier) sellerModifier = 1.0;
 
     let itemCost = LootSheetActions.getItemCost(sellItem)
