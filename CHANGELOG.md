@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.1.0] - 2020-12-31
-### Version numbering reset
+### Changes
 - Fixed display of cost (to 2 decimal places)
 - Added ability to use alt currency when buying items (weighted currency is deducted first, then weightless, change is returned as weighted)
 - Added mass identify and unindentify button
