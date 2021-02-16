@@ -1,4 +1,5 @@
 <form class="D35E {{cssClass}}" autocomplete="off">
+ <button type="submit" disabled style="display: none" aria-hidden="true"></button>
 
   <!-- HEADER -->
   <header class="sheet-header flexrow">
@@ -7,6 +8,12 @@
     </h1>
 
     {{#if isGM}}
+    <div class="charbutton">
+      <button class="identify-all" type="identify-all" name="identify-all" value=""><i class="fa fa-eye"></i> {{localize "ls.identifyAll"}}</button>
+    </div>
+    <div class="charbutton">
+      <button class="unidentify-all" type="unidentify-all" name="unidentify-all" value=""><i class="fa fa-eye-slash default"></i> {{localize "ls.unidentifyAll"}}</button>
+    </div>
     {{#ifeq lootsheettype "Merchant"}}
     <div class="charbutton">
       <button class="price-modifier" type="price-modifier" name="price-modifier" value=""><i class="fa fa-balance-scale"></i> {{localize "ls.priceModifierTitle"}}</button>

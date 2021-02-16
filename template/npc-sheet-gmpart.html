@@ -91,6 +91,11 @@
                             <div class="flexcol"><h4>{{localize "ls.itemQtyFormula"}}: </h4></div>
                             <div class="flexcol"><input name="flags.d35elootsheetnpc.itemQty" type="text" data-dtype="String" placeholder="e.g. 1d4" value="{{actor.flags.d35elootsheetnpc.itemQty}}"/></div>
                         </div>
+
+                        <div class="flexrow">
+                            <div class="flexcol"><h4>{{localize "ls.shopStackSameName"}}: </h4></div>
+                            <div class="flexcol"><input name="flags.d35elootsheetnpc.shopStack" type="checkbox" data-dtype="Boolean" value="{{actor.flags.d35elootsheetnpc.shopStack}}"  {{#if actor.flags.d35elootsheetnpc.shopStack}}checked{{/if}}/></div>
+                        </div>
                     </div>
                     <button class="update-inventory" type="update-inventory" name="update-inventory" value="1"><i class="fas fa-balance-scale"></i> {{localize "ls.updateShopInventory"}} </button>
                 {{/ifeq}}

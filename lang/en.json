@@ -94,6 +94,9 @@
   "ls.shopQtyFormula": "Shop Qty Formula",
   "ls.itemQtyFormula": "Item Qty Formula",
   "ls.updateShopInventory": "Update Shop Inventory",
+  "ls.shopStackSameName": "Stack items by Name",
+  "ls.unidentifyAll": "Unidentify All",
+  "ls.identifyAll": "Identify All",
   
   "ls.splitcoins": " {quantity} {currency}",
   "ls.receives": "{actor} receives:",

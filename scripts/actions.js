@@ -215,6 +215,7 @@ export class LootSheetActions {
     itemCost = Math.round(itemCost * sellerModifier * 100) / 100;
     itemCost *= quantity;
     let buyerFunds = duplicate(buyer.data.data.currency);
+    let buyerFundsAlt = duplicate(buyer.data.data.altCurrency);
     const conversionRate = {
       "pp": 10,
       "gp": 1,
@@ -222,12 +223,17 @@ export class LootSheetActions {
       "cp": 0.01
     };
     let buyerFundsAsGold = 0;
+    let buyerAltFundsAsGold = 0;
 
     for (let currency in buyerFunds) {
       buyerFundsAsGold += buyerFunds[currency] * conversionRate[currency];
     }
 
-    if (itemCost > buyerFundsAsGold) {
+    for (let currency in buyerFundsAlt) {
+      buyerAltFundsAsGold += buyerFundsAlt[currency] * conversionRate[currency];
+    }
+    console.log(buyerFunds,buyerFundsAlt)
+    if (itemCost > (buyerFundsAsGold + buyerAltFundsAsGold)) {
       LootSheetActions.errorMessageToActor(buyer, game.i18n.localize("ERROR.lsNotEnougFunds"));
       return;
     }
@@ -236,19 +242,25 @@ export class LootSheetActions {
     // Update buyer's gold
     
     // make sure that coins is a number (not a float)
-    while(!Number.isInteger(itemCost)) {
+    // highest amount is 2 iterations
+    let i = 0
+    while(!Number.isInteger(itemCost) && i < 2) {
       itemCost *= 10;
       for (const key in conversionRate) {
         conversionRate[key] *= 10
       }
+      i++;
     }
-    
+    itemCost = Math.round(itemCost);
+    for (const key in conversionRate) {
+      conversionRate[key] = Math.round(conversionRate[key]);
+    }
     const DEBUG = false;
     if (DEBUG) console.log("Loot Sheet | Conversion rates: ");
     if (DEBUG) console.log(conversionRate);
     
     // remove funds from lowest currency to highest
-    let remainingFond = 0
+    let remainingFunds = 0
     for (const currency of Object.keys(conversionRate).reverse()) {
       //console.log("Rate: " + conversionRate[currency])
       if(conversionRate[currency] < 1) {
@@ -264,10 +276,32 @@ export class LootSheetActions {
         itemCost -= value
         const lost = Math.ceil( value / conversionRate[currency] )
         buyerFunds[currency] -= lost
-        remainingFond += lost * conversionRate[currency] - value
+        remainingFunds += lost * conversionRate[currency] - value
         if (DEBUG) console.log("Loot Sheet | Value+: " + value)
         if (DEBUG) console.log("Loot Sheet | Lost+: " + lost)
-        if (DEBUG) console.log("Loot Sheet | RemainingFond+: " + remainingFond)
+        if (DEBUG) console.log("Loot Sheet | remainingFunds+: " + remainingFunds)
+      }
+    }
+
+    for (const currency of Object.keys(conversionRate).reverse()) {
+      //console.log("Rate: " + conversionRate[currency])
+      if(conversionRate[currency] < 1) {
+        const ratio = 1/conversionRate[currency]
+        const value = Math.min(itemCost, Math.floor(buyerFundsAlt[currency] / ratio))
+        if (DEBUG) console.log("Loot Sheet | BuyerFunds " + currency + ": " + buyerFunds[currency])
+        if (DEBUG) console.log("Loot Sheet | Ratio: " + ratio)
+        if (DEBUG) console.log("Loot Sheet | Value: " + value)
+        itemCost -= value
+        buyerFundsAlt[currency] -= value * ratio
+      } else {
+        const value = Math.min(itemCost, Math.floor(buyerFundsAlt[currency] * conversionRate[currency]))
+        itemCost -= value
+        const lost = Math.ceil( value / conversionRate[currency] )
+        buyerFundsAlt[currency] -= lost
+        remainingFunds += lost * conversionRate[currency] - value
+        if (DEBUG) console.log("Loot Sheet | Value+: " + value)
+        if (DEBUG) console.log("Loot Sheet | Lost+: " + lost)
+        if (DEBUG) console.log("Loot Sheet | remainingFunds+: " + remainingFunds)
       }
     }
     
@@ -276,20 +310,20 @@ export class LootSheetActions {
       return ui.notifications.error(game.i18n.localize("ERROR.lsCurrencyConversionFailed"));
     }
     
-    //console.log("RemainingFond: " + remainingFond)
+    console.log("remainingFunds: " + remainingFunds)
     
-    if(remainingFond > 0) {
+    if(remainingFunds > 0) {
       for (const currency of Object.keys(conversionRate)) {
-        if (conversionRate[currency] <= remainingFond) {
-          buyerFunds[currency] += Math.floor(remainingFond / conversionRate[currency]);
-          remainingFond = remainingFond % conversionRate[currency];
+        if (conversionRate[currency] <= remainingFunds) {
+          buyerFunds[currency] += Math.floor(remainingFunds / conversionRate[currency]);
+          remainingFunds = remainingFunds % conversionRate[currency];
           if (DEBUG) console.log("Loot Sheet | buyerFunds " + currency + ": " + buyerFunds[currency]);
-          if (DEBUG) console.log("Loot Sheet | remainingFond: " + remainingFond);
+          if (DEBUG) console.log("Loot Sheet | remainingFunds: " + remainingFunds);
         }
       }
     }
     
-    if(remainingFond > 0) {
+    if(remainingFunds > 0) {
       LootSheetActions.errorMessageToActor(buyer, game.i18n.localize("ERROR.lsCurrencyConversionFailed"));
       return ui.notifications.error(game.i18n.localize("ERROR.lsCurrencyConversionFailed"));
     }
@@ -298,14 +332,15 @@ export class LootSheetActions {
 
     // Update buyer's gold from the buyer.
     buyer.update({
-      "data.currency": buyerFunds
+      "data.currency": buyerFunds,
+      "data.altCurrency": buyerFundsAlt
     });
     let moved = LootSheetActions.moveItem(seller, buyer, itemId, quantity);
 
     if(moved) {
       LootSheetActions.chatMessage(
         speaker, buyer,
-        game.i18n.format("ls.chatPurchase", { buyer: buyer.name, quantity: quantity, name: moved.item.showName, cost: originalCost }),
+        game.i18n.format("ls.chatPurchase", { buyer: buyer.name, quantity: quantity, name: moved.item.showName, cost: originalCost.toFixed(2) }),
         moved.item);
     }
   }

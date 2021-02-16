@@ -223,6 +223,13 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       // Price Modifier
       html.find('.price-modifier').click(ev => this._priceModifier(ev));
 
+
+      // Split Coins
+      html.find('.identify-all').click(ev => this._identifyAll(ev));
+
+      // Price Modifier
+      html.find('.unidentify-all').click(ev => this._unidentifyAll(ev));
+
       // Price Modifier
       html.find('.convert-loot').click(ev => this._convertLoot(ev));
       
@@ -301,11 +308,10 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       return;
     }
     
-    console.log(this.actor)
     const rolltableName = await this.actor.getFlag(LootSheetD35ENPC.MODULENAME, "rolltable");
     const shopQtyFormula = await this.actor.getFlag(LootSheetD35ENPC.MODULENAME, "shopQty") || "1";
     const itemQtyFormula = await this.actor.getFlag(LootSheetD35ENPC.MODULENAME, "itemQty") || "1";
-    console.log(itemQtyFormula)
+    const itemStack = await this.actor.getFlag(LootSheetD35ENPC.MODULENAME, "stopStack") || "1";
 
     if (!rolltableName || rolltableName.length == 0) {
       return ui.notifications.error(game.i18n.format("ERROR.lsChooseTable"));
@@ -352,14 +358,23 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
           return ui.notifications.error(`No item found "${rollResult.results[0].resultId}".`);
         }
       }
-
       let itemQtyRoll = new Roll(itemQtyFormula);
       itemQtyRoll.roll();
       console.log(`Loot Sheet | Adding ${itemQtyRoll.result} x ${newItem.name}`)
-      newItem.data.data.quantity = Number(itemQtyRoll.result);
-      console.log(newItem)
 
-      await this.actor.createEmbeddedEntity("OwnedItem", newItem);
+      if (itemStack) {
+        let existingItem = this.actor.items.find(i => i.name === newItem.name);
+        if (existingItem) {
+          existingItem.update({'data.quantity':(existingItem.data.data.quantity || 1) + Number(itemQtyRoll.result)})
+        } else {
+          newItem.data.data.quantity = Number(itemQtyRoll.result);
+          await this.actor.createEmbeddedEntity("OwnedItem", newItem.data);
+        }
+      } else {
+        newItem.data.data.quantity = Number(itemQtyRoll.result);
+        await this.actor.createEmbeddedEntity("OwnedItem", newItem.data);
+      }
+    
     }
   }
 
@@ -527,6 +542,39 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
   }
 
   /* -------------------------------------------- */
+
+  /**
+   * Handle mass identify
+   * @private
+   */
+  async _identifyAll(event) {
+    event.preventDefault();
+    let updateList = []
+    this.actor.items.forEach( item  => {
+      if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0) {
+        updateList.push({'_id':item._id, 'data.identified': true})
+      }
+     }     
+   );
+   this.actor.updateOwnedItem(updateList)
+  }
+
+  /**
+   * Handle mass unidentify
+   * @private
+   */
+  async _unidentifyAll(event) {
+    event.preventDefault();
+    let updateList = []
+    this.actor.items.forEach( item  => {
+      if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0) {
+        updateList.push({'_id':item._id, 'data.identified': false})
+      }
+     }     
+   );
+   this.actor.updateOwnedItem(updateList)
+  }
+  
 
   /**
    * Handle price modifier.
