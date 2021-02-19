@@ -147,7 +147,7 @@ section.sheet-lower {
 	height: 100%;
 }
 
-.sheet-content.content div {
+.sheet-content.content div:not(.item-image) {
 	height: 100%;
 }
 
