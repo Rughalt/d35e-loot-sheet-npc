@@ -649,7 +649,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
     Dialog.confirm({
       title: game.i18n.localize("ls.convertLootTitle"),
       content: game.i18n.localize("ls.convertLootMessage"),
-      yes: () => {
+      yes: () => (async () => {
         let total = 0
         let deleteList = []
         this.actor.items.forEach( item  => {
@@ -668,9 +668,9 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
         funds.gp = Number(funds.gp)
         funds.gp += Math.round(total)
         
-        this.actor.update({ "data.currency": funds });
-        this.actor.deleteEmbeddedEntity("OwnedItem", deleteList)
-      },
+        await this.actor.update({ "data.currency": funds });
+        await this.actor.deleteEmbeddedEntity("OwnedItem", deleteList)
+      })(),
       no: () => {}
     });
   }
