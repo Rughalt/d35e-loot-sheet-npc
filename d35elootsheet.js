@@ -365,7 +365,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       if (itemStack) {
         let existingItem = this.actor.items.find(i => i.name === newItem.name);
         if (existingItem) {
-          existingItem.update({'data.quantity':(existingItem.data.data.quantity || 1) + Number(itemQtyRoll.result)})
+          await existingItem.update({'data.quantity':(existingItem.data.data.quantity || 1) + Number(itemQtyRoll.result)})
         } else {
           newItem.data.data.quantity = Number(itemQtyRoll.result);
           await this.actor.createEmbeddedEntity("OwnedItem", newItem.data);
@@ -556,7 +556,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       }
      }     
    );
-   this.actor.updateOwnedItem(updateList)
+   await this.actor.updateOwnedItem(updateList)
   }
 
   /**
@@ -572,7 +572,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       }
      }     
    );
-   this.actor.updateOwnedItem(updateList)
+   await this.actor.updateOwnedItem(updateList)
   }
   
 
@@ -750,9 +750,9 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       }
       
       // Increase currency for players
-      u.update({ 'data.currency': newCurrency, 'data.altCurrency': newAltCurrency });
+      await u.update({ 'data.currency': newCurrency, 'data.altCurrency': newAltCurrency });
       // Remove currency from loot actor.
-      this.actor.update({ "data.currency": currencyRemains, "data.altCurrency": altCurrencyRemains });
+      await this.actor.update({ "data.currency": currencyRemains, "data.altCurrency": altCurrencyRemains });
       
       // Create chat message for coins received
       if (msg.length != 0) {

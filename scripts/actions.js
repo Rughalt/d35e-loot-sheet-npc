@@ -45,7 +45,7 @@ export class LootSheetActions {
   /**
    * Moves an item from a source actor to a destination actor
    */
-  static moveItem(source, destination, itemId, quantity) {
+  static async moveItem(source, destination, itemId, quantity) {
     //console.log("Loot Sheet | moveItem")
     let item = source.getEmbeddedEntity("OwnedItem", itemId);
     
@@ -71,13 +71,13 @@ export class LootSheetActions {
     };
 
     if (update["data.quantity"] === 0) {
-      source.deleteEmbeddedEntity("OwnedItem", itemId);
+      await source.deleteEmbeddedEntity("OwnedItem", itemId);
     } else {
-      source.updateEmbeddedEntity("OwnedItem", update);
+      await source.updateEmbeddedEntity("OwnedItem", update);
     }
 
     newItem.data.quantity = quantity;
-    destination.createEmbeddedEntity("OwnedItem", newItem);
+    await destination.createEmbeddedEntity("OwnedItem", newItem);
     newItem.showName = LootSheetActions.getItemName(newItem)
     newItem.showCost = LootSheetActions.getItemCost(newItem)
     
@@ -91,7 +91,7 @@ export class LootSheetActions {
   /**
    * Moves coins from a source actor to a destination actor
    */
-  static moveCoins(source, destination, itemId, quantity) {
+  static async moveCoins(source, destination, itemId, quantity) {
     //console.log("Loot Sheet | moveCoins")
     
     if(itemId.startsWith("wl_")) {
@@ -107,11 +107,11 @@ export class LootSheetActions {
 
       const srcUpdate = { data: { altCurrency: { } } };
       srcUpdate.data.altCurrency[itemId] = source.data.data.altCurrency[itemId] - quantity;
-      source.update(srcUpdate)
+      await source.update(srcUpdate)
       
       const dstUpdate = { data: { altCurrency: { } } };
       dstUpdate.data.altCurrency[itemId] = destination.data.data.altCurrency[itemId] + quantity;
-      destination.update(dstUpdate)
+      await destination.update(dstUpdate)
     }
     else {
       // Move all items if we select more than the quantity.
@@ -124,11 +124,11 @@ export class LootSheetActions {
 
       const srcUpdate = { data: { currency: { } } };
       srcUpdate.data.currency[itemId] = source.data.data.currency[itemId] - quantity;
-      source.update(srcUpdate)
+      await source.update(srcUpdate)
       
       const dstUpdate = { data: { currency: { } } };
       dstUpdate.data.currency[itemId] = destination.data.data.currency[itemId] + quantity;
-      destination.update(dstUpdate)
+      await destination.update(dstUpdate)
     }
     
     return {
@@ -140,7 +140,7 @@ export class LootSheetActions {
   /**
    * A looter (target actor) takes an item from a container (source actor)
    */
-  static lootItem(speaker, container, looter, itemId, quantity) {
+  static async lootItem(speaker, container, looter, itemId, quantity) {
     console.log("Loot Sheet | LootSheetActions.lootItem")
     
     if (itemId.length == 2 || itemId.startsWith("wl_")) {
@@ -153,7 +153,7 @@ export class LootSheetActions {
       }
     }
     else {
-      let moved = LootSheetActions.moveItem(container, looter, itemId, quantity);
+      let moved = await LootSheetActions.moveItem(container, looter, itemId, quantity);
       if(!moved) return;
 
       LootSheetActions.chatMessage(
@@ -166,9 +166,9 @@ export class LootSheetActions {
   /**
    * A giver (source actor) drops or sells a item to a container (target actor)
    */
-  static dropOrSellItem(speaker, container, giver, itemId) {
+  static async dropOrSellItem(speaker, container, giver, itemId) {
     //console.log("Loot Sheet | Drop or sell item")
-    let moved = LootSheetActions.moveItem(giver, container, itemId);
+    let moved = await LootSheetActions.moveItem(giver, container, itemId);
     if(!moved) return;
     let messageKey = ""
     let cost = Math.floor(moved.item.showCost)
@@ -181,8 +181,8 @@ export class LootSheetActions {
           cost = Math.round(cost / 2)
         }
         sellerFunds["gp"] += cost * moved.quantity
-        giver.update({ "data.currency": sellerFunds });
-        giver.update({ "data.currency": sellerFunds }); // 2x required or it will not be stored? WHY???
+        await giver.update({ "data.currency": sellerFunds });
+        await giver.update({ "data.currency": sellerFunds }); // 2x required or it will not be stored? WHY???
       }
     } else {
       messageKey = "ls.chatDrop"
@@ -197,7 +197,7 @@ export class LootSheetActions {
   /**
    * Quick function to do a trasaction between a seller (source) and a buyer (target)
    */
-  static transaction(speaker, seller, buyer, itemId, quantity) {
+  static async transaction(speaker, seller, buyer, itemId, quantity) {
     console.log("Loot Sheet | Transaction")
 
     let sellItem = seller.getEmbeddedEntity("OwnedItem", itemId);
@@ -331,11 +331,11 @@ export class LootSheetActions {
     if (DEBUG) console.log(buyerFunds)
 
     // Update buyer's gold from the buyer.
-    buyer.update({
+    await buyer.update({
       "data.currency": buyerFunds,
       "data.altCurrency": buyerFundsAlt
     });
-    let moved = LootSheetActions.moveItem(seller, buyer, itemId, quantity);
+    let moved = await LootSheetActions.moveItem(seller, buyer, itemId, quantity);
 
     if(moved) {
       LootSheetActions.chatMessage(
@@ -348,7 +348,7 @@ export class LootSheetActions {
   /**
    * Actor gives something to another actor
    */
-  static giveItem(speaker, giverId, receiverId, itemId, quantity) {
+  static async giveItem(speaker, giverId, receiverId, itemId, quantity) {
     quantity = Number(quantity)  // convert to number (just in case)
     
     let giver = game.actors.get(giverId);
@@ -366,7 +366,7 @@ export class LootSheetActions {
     }
     
     if (giver && receiver) {
-      let moved = LootSheetActions.moveItem(giver, receiver, itemId, quantity);
+      let moved = await LootSheetActions.moveItem(giver, receiver, itemId, quantity);
       if(moved) {
         LootSheetActions.chatMessage(
           speaker, receiver,
