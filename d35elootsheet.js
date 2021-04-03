@@ -75,7 +75,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
     
     Handlebars.registerHelper('lootsheetweight', function(baseWeight, count) {
       let weightConversion = game.settings.get("D35E", "units") === "metric" ? 0.5 : 1;
-      return baseWeight * count * weightConversion;
+      return Math.round(baseWeight * count * weightConversion * 100) / 100;
     });
     
     Handlebars.registerHelper('lootsheetname', function(name, quantity) {
@@ -226,6 +226,9 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
 
       // Split Coins
       html.find('.identify-all').click(ev => this._identifyAll(ev));
+
+      // Group Items
+      html.find('.group-items').click(ev => this._groupItems(ev));
 
       // Price Modifier
       html.find('.unidentify-all').click(ev => this._unidentifyAll(ev));
@@ -558,6 +561,13 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
    );
    await this.actor.updateOwnedItem(updateList)
   }
+
+
+  async _groupItems(event) {
+    event.preventDefault();
+    await this.actor.groupItems()
+  }
+  
 
   /**
    * Handle mass unidentify

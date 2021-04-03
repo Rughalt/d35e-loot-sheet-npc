@@ -8,6 +8,9 @@
     </h1>
 
     {{#if isGM}}
+    <div class="charbutton" style="flex: 0">
+      <button class="group-items" type="group-items" name="group-items" value=""><i class="fa fa-broom default"></i></button>
+    </div>
     <div class="charbutton">
       <button class="identify-all" type="identify-all" name="identify-all" value=""><i class="fa fa-eye"></i> {{localize "ls.identifyAll"}}</button>
     </div>
@@ -103,7 +106,7 @@
                     {{#if ../isGM}}
                       <div class="item-detail item-identified"><i class="icon icon-quill-ink large" title="{{localize "D35E.Identified"}}"></i></div>
                     {{/if}}
-                    <div class="item-detail item-weight"><i class="icon icon-weight large" src="systems/D35E/icons/actions/weight.svg" title="{{localize "PF1.Weight"}}"></i></div>
+                    <div class="item-detail item-weight"><i class="icon icon-weight large" src="systems/D35E/icons/actions/weight.svg" title="{{localize "D35E.Weight"}}"></i></div>
                     <div class="item-detail item-weight"><i class="fas fa-coins large" title="{{localize "ls.price"}}"></i></div>
                     <div class="item-controls">
                     {{#if ../isGM}}

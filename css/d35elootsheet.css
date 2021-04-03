@@ -179,11 +179,13 @@ section.sheet-content.content {
 	flex: 0 0 150px;
 	margin: auto;
 	text-align: right;
+	cursor: pointer;
 }
 
-button.price-modifier, button.convert-loot, button.identify-all, button.unidentify-all {
+button.price-modifier, button.convert-loot, button.identify-all, button.group-items, button.unidentify-all {
 	width: auto;
 	padding: 1px 10px;
+	cursor: pointer;
 	margin-right: 5px;
 }
 
