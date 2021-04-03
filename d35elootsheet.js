@@ -776,7 +776,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
    * Handle cycling permissions
    * @private
    */
-  _onCyclePermissionProficiency(event) {
+  async _onCyclePermissionProficiency(event) {
     event.preventDefault();
     //console.log("Loot Sheet | this.actor.data.permission", this.actor.data.permission);
     
@@ -804,20 +804,20 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
     let permissions = duplicate(this.actor.data.permission)
     permissions[playerId] = newLevel;
     //console.log(`About to change permissions are: ${JSON.stringify(permissions)}`);
-    this.actor.update( { permission: permissions }, {diff: false});    
+    await this.actor.update( { permission: permissions }, {diff: false});    
     //console.log(`Newly changed entity permissions are: ${JSON.stringify(this.actor.data.permission)}`);
     this._onSubmit(event);
   }
 
   
-  _onBatchPermissionChange(event) {
+  async _onBatchPermissionChange(event) {
     event.preventDefault();
     let newLevel = Number($(event.currentTarget).attr("data-perm"))
     let permissions = duplicate(this.actor.data.permission)
     game.users.forEach((u) => {
       if (!u.isGM) { permissions[u.id] = newLevel }
     });
-    this.actor.update( { permission: permissions }, {diff: false});
+    await this.actor.update( { permission: permissions }, {diff: false});
     this._onSubmit(event);
   }
 
