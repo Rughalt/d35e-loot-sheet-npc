@@ -27,7 +27,7 @@
 }
 
 .loot-sheet-npc .warn {
-  color: red;
+  color: darkred !important;
 }
 
 .loot-sheet-npc .gm-settings .sheet-types,
@@ -207,7 +207,7 @@ input#price-modifier-percent-display:focus,
 input#quantity:hover,
 input#quantity:focus {
 	border: 1px solid #111;
-	box-shadow: 0 0 8px red;
+	box-shadow: 0 0 8px rgb(27, 109, 148);
 }
 
 .loot-sheet-npc .sheet-profile-img {

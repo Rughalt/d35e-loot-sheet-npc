@@ -384,7 +384,7 @@ export class LootSheetActions {
    */
   static getItemName(item) {
     if(!item) return ""
-    else return item.data.identified || !item.data.unidentified || !item.data.unidentified.name || item.data.unidentified.name.length == 0 ? item.name : item.data.unidentified.name
+    else return (item.data.identified || !item.data.unidentified || !item.data.unidentified.name || item.data.unidentified.name.length == 0) ? item.name : item.data.unidentified.name
   }
 
   /**

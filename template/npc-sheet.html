@@ -59,7 +59,7 @@
           <div class="tab inventory active" data-tab="inventory" data-group="primary">
 
             <!-- FEATURES -->
-            <div class="features" data-group="primary" data-tab="features">
+            <div class="features" data-group="primary" data-tab="features" {{#ifeq lootsheettype "Loot"}}style="height: calc(100% - 30px);"{{/ifeq}}>
               {{#ifeq lootsheettype "Loot"}}
               <div class="inventory-filters" style="height: 64px;">
                 <ol class="currency flexrow">
@@ -165,13 +165,13 @@
             {{#ifeq lootsheettype "Loot"}}
             <div class="form-group totals">
               <div class="item-count {{itemsWarning}}">
-                <i class="fas fa-box"> {{localize "ls.totalItems"}}:</i> {{totalItems}} {{maxItems}}
+                <i class="fas fa-box tooltip" style="margin-right: 4px"></i> {{localize "ls.totalItems"}}:{{totalItems}} {{maxItems}}
               </div>
               <div class="item-weight {{weightWarning}}">
-                <i class="fas fa-weight-hanging"> {{localize "ls.totalWeight"}}:</i> {{totalWeight}} {{maxWeight}} {{weightUnit}}
+                <i class="fas fa-weight-hanging tooltip" style="margin-right: 4px"></i>{{localize "ls.totalWeight"}}: {{totalWeight}} {{maxWeight}} {{weightUnit}}
               </div>
-              <div class="item-price">
-                <i class="fas fa-coins"> {{localize "ls.totalPrice"}}:</i> {{totalPrice}}
+              <div class="item-price" >
+                <i class="fas fa-coins tooltip" style="margin-right: 4px"></i>{{localize "ls.totalPrice"}}: {{totalPrice}}
               </div>
             </div>
             {{/ifeq}}
