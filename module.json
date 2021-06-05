@@ -2,7 +2,7 @@
     "name": "d35elootsheetnpc",
     "title": "3.5e Loot Sheet NPC",
     "description": "This module adds an additional NPC sheet which can be used for loot containers such as chests or shopkeepers.",
-    "version": "1.2.0",
+    "version": "2.0.4",
     "author": "Rughalt",
     "systems": [
         "D35E"
