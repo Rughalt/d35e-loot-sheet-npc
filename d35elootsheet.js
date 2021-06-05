@@ -158,8 +158,9 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
     let maxLoad = await this.actor.getFlag(LootSheetD35ENPC.MODULENAME, "maxLoad") || 0;
     
 
-    Object.keys(sheetData.actor.features).forEach( f => sheetData.actor.features[f].items.forEach( i => {  
+    Object.keys(sheetData.actor.features).forEach( f => sheetData.actor.features[f].items.forEach( _i => {  
       // specify if empty
+      let i = _i;
       const itemQuantity = getProperty(i, "data.quantity") != null ? getProperty(i, "data.quantity") : 1;
       const itemCharges = getProperty(i, "data.uses.value") != null ? getProperty(i, "data.uses.value") : 1;
       i.empty = itemQuantity <= 0 || (i.isCharged && itemCharges <= 0);
@@ -331,7 +332,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
     if (clearInventory) {
 
       let currentItems = this.actor.data.items.map(i => i._id);
-      await this.actor.deleteEmbeddedEntity("OwnedItem", currentItems);
+      await this.actor.deleteEmbeddedEntity("Item", currentItems);
       console.log(currentItems);
     }
     //return;
@@ -368,14 +369,14 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       if (itemStack) {
         let existingItem = this.actor.items.find(i => i.name === newItem.name);
         if (existingItem) {
-          await existingItem.update({'data.quantity':(existingItem.data.data.quantity || 1) + Number(itemQtyRoll.result)})
+          await existingItem.update({'data.quantity':(existingitem.data.quantity || 1) + Number(itemQtyRoll.result)})
         } else {
-          newItem.data.data.quantity = Number(itemQtyRoll.result);
-          await this.actor.createEmbeddedEntity("OwnedItem", newItem.data);
+          newitem.data.quantity = Number(itemQtyRoll.result);
+          await this.actor.createEmbeddedEntity("Item", newItem.data);
         }
       } else {
-        newItem.data.data.quantity = Number(itemQtyRoll.result);
-        await this.actor.createEmbeddedEntity("OwnedItem", newItem.data);
+        newitem.data.quantity = Number(itemQtyRoll.result);
+        await this.actor.createEmbeddedEntity("Item", newItem.data);
       }
     
     }
@@ -559,7 +560,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       }
      }     
    );
-   await this.actor.updateOwnedItem(updateList)
+   await this.actor.updateEmbeddedEntity("Item",updateList)
   }
 
 
@@ -582,7 +583,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
       }
      }     
    );
-   await this.actor.updateOwnedItem(updateList)
+   await this.actor.updateEmbeddedEntity("Item",updateList)
   }
   
 
@@ -631,7 +632,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
   _toggleVisibility(event) {
     event.preventDefault();
     let itemId = $(event.currentTarget).parents(".item").attr("data-item-id");
-    let item = this.actor.getOwnedItem(itemId);
+    let item = this.actor.items.get(itemId);
     if(item) {
       console.log(item)
       if(!item.getFlag(LootSheetD35ENPC.MODULENAME, "secret")) {
@@ -679,7 +680,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
         funds.gp += Math.round(total)
         
         await this.actor.update({ "data.currency": funds });
-        await this.actor.deleteEmbeddedEntity("OwnedItem", deleteList)
+        await this.actor.deleteEmbeddedEntity("Item", deleteList)
       })(),
       no: () => {}
     });
@@ -1076,7 +1077,7 @@ class LootSheetD35ENPC extends ActorSheetPFNPC {
 /**
  * Register a hook 
  */
-Hooks.on('preCreateOwnedItem', (actor, item, data) => {
+Hooks.on('preCreateItem', (actor, item, data) => {
 
   if (!actor) throw new Error(`Parent Actor ${actor._id} not found`);
   
@@ -1111,7 +1112,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     
     const giver = game.actors.get(data.actorId)
     const receiver = game.actors.get(actorDestId)
-    const item = giver.getEmbeddedEntity("OwnedItem", data.data._id);
+    const item = giver.getEmbeddedEntity("Item", data.data._id);
     
     // validate the type of item to be "moved" or "added"
     if(!["weapon","equipment","consumable","loot"].includes(item.type)) {

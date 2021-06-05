@@ -47,7 +47,7 @@ export class LootSheetActions {
    */
   static async moveItem(source, destination, itemId, quantity) {
     //console.log("Loot Sheet | moveItem")
-    let item = source.getEmbeddedEntity("OwnedItem", itemId);
+    let item = source.items.get(itemId);
     
     if(!item) {
       ui.notifications.warn(game.i18n.format("ERROR.lsInvalidMove", { actor: source.name }));
@@ -71,13 +71,13 @@ export class LootSheetActions {
     };
 
     if (update["data.quantity"] === 0) {
-      await source.deleteEmbeddedEntity("OwnedItem", itemId);
+      await source.deleteEmbeddedEntity("Item", itemId);
     } else {
-      await source.updateEmbeddedEntity("OwnedItem", update);
+      await source.updateEmbeddedEntity("Item", update);
     }
 
     newItem.data.quantity = quantity;
-    await destination.createEmbeddedEntity("OwnedItem", newItem);
+    await destination.createEmbeddedEntity("Item", newItem);
     newItem.showName = LootSheetActions.getItemName(newItem)
     newItem.showCost = LootSheetActions.getItemCost(newItem)
     
@@ -200,7 +200,7 @@ export class LootSheetActions {
   static async transaction(speaker, seller, buyer, itemId, quantity) {
     console.log("Loot Sheet | Transaction")
 
-    let sellItem = seller.getEmbeddedEntity("OwnedItem", itemId);
+    let sellItem = seller.items.get(itemId);
 
 
     // If the buyer attempts to buy more then what's in stock, buy all the stock.
