@@ -144,7 +144,7 @@ export class LootSheetActions {
     console.log("Loot Sheet | LootSheetActions.lootItem")
     
     if (itemId.length == 2 || itemId.startsWith("wl_")) {
-      let moved = LootSheetActions.moveCoins(container, looter, itemId, quantity);
+      let moved = await LootSheetActions.moveCoins(container, looter, itemId, quantity);
 
       if (moved) {
         LootSheetActions.chatMessage(
